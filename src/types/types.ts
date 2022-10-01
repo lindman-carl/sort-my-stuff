@@ -7,12 +7,12 @@ export type Item = {
 export type Unit = {
   id: string;
   name: string;
-  items: string[];
+  items?: string[];
   collectionId: string;
 };
 
 export type Collection = {
   id: string;
   name: string;
-  units: string[];
+  units?: string[];
 };
