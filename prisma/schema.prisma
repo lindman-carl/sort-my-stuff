@@ -62,3 +62,24 @@ model VerificationToken {
 
     @@unique([identifier, token])
 }
+
+model Item {
+    id     String @id @default(cuid())
+    name   String
+    unit   Unit   @relation(fields: [unitId], references: [id])
+    unitId String
+}
+
+model Unit {
+    id           String     @id @default(cuid())
+    name         String
+    items        Item[]
+    collection   Collection @relation(fields: [collectionId], references: [id])
+    collectionId String
+}
+
+model Collection {
+    id    String @id @default(cuid())
+    name  String
+    Units Unit[]
+}
