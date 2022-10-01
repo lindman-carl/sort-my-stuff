@@ -81,5 +81,5 @@ model Unit {
 model Collection {
     id    String @id @default(cuid())
     name  String
-    Units Unit[]
+    units Unit[]
 }
