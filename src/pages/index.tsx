@@ -3,9 +3,8 @@ import Head from "next/head";
 import { trpc } from "../utils/trpc";
 
 const Home: NextPage = () => {
-  const items = trpc.useQuery(["main.getAllItems"]);
-  const units = trpc.useQuery(["main.getAllUnits"]);
-  const collections = trpc.useQuery(["main.getAllCollections"]);
+  const userStuff = trpc.useQuery(["main.getStuff"]);
+  console.log(userStuff.data);
 
   return (
     <>
@@ -17,24 +16,8 @@ const Home: NextPage = () => {
 
       <main className="container mx-auto flex flex-col items-center justify-start min-h-screen p-4">
         <div>
-          {items && units && collections ? (
-            <div>
-              <ol>
-                {items.data?.map((el) => (
-                  <li key={el.id}>{el.name}</li>
-                ))}
-              </ol>
-              <ol>
-                {units.data?.map((el) => (
-                  <li key={el.id}>{el.name}</li>
-                ))}
-              </ol>
-              <ol>
-                {collections.data?.map((el) => (
-                  <li key={el.id}>{el.name}</li>
-                ))}
-              </ol>
-            </div>
+          {userStuff ? (
+            <div>{JSON.stringify(userStuff.data)}</div>
           ) : (
             <p>Loading..</p>
           )}
