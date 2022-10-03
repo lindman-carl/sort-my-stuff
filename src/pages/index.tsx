@@ -1,10 +1,12 @@
-import type { NextPage } from "next";
 import Head from "next/head";
 import { trpc } from "../utils/trpc";
 
+// types
+import type { NextPage } from "next";
+
 const Home: NextPage = () => {
-  const userStuff = trpc.useQuery(["main.getStuff"]);
-  console.log(userStuff.data);
+  const { data } = trpc.useQuery(["main.getStuff"]);
+  console.log(data);
 
   return (
     <>
@@ -15,13 +17,7 @@ const Home: NextPage = () => {
       </Head>
 
       <main className="container mx-auto flex flex-col items-center justify-start min-h-screen p-4">
-        <div>
-          {userStuff ? (
-            <div>{JSON.stringify(userStuff.data)}</div>
-          ) : (
-            <p>Loading..</p>
-          )}
-        </div>
+        <div>{data ? <div>{JSON.stringify(data)}</div> : <p>Loading..</p>}</div>
       </main>
     </>
   );
