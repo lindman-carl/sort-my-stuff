@@ -16,3 +16,9 @@ export type Collection = {
   name: string;
   units?: string[];
 };
+
+export type Stuff = {
+  items?: Item[];
+  units?: Unit[];
+  collections?: Collection[];
+};
