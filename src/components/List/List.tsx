@@ -203,41 +203,47 @@ const List: React.FC<ListProps> = ({ initialData }) => {
   };
 
   return (
-    <DragDropContext onDragEnd={handleOnDragEnd}>
-      <Droppable droppableId="all-units" type="collection" direction="vertical">
-        {(provided) => (
-          <div {...provided.droppableProps} ref={provided.innerRef}>
-            {data.collections.map(({ id }, index) => {
-              const collection = data.collections.find((el) => el.id === id);
+    <div className="w-full flex flex-col justify-start items-center">
+      <DragDropContext onDragEnd={handleOnDragEnd}>
+        <Droppable
+          droppableId="all-units"
+          type="collection"
+          direction="vertical"
+        >
+          {(provided) => (
+            <div {...provided.droppableProps} ref={provided.innerRef}>
+              {data.collections.map(({ id }, index) => {
+                const collection = data.collections.find((el) => el.id === id);
 
-              if (!collection) {
-                return <>{id} not found</>;
-              }
+                if (!collection) {
+                  return <>{id} not found</>;
+                }
 
-              const units = data.units.filter((el) =>
-                collection.unitIds.includes(el.id)
-              );
-              const sortedUnits = [...units].sort(
-                (a, z) =>
-                  collection.unitIds.indexOf(a.id) -
-                  collection.unitIds.indexOf(z.id)
-              );
+                const units = data.units.filter((el) =>
+                  collection.unitIds.includes(el.id)
+                );
+                const sortedUnits = [...units].sort(
+                  (a, z) =>
+                    collection.unitIds.indexOf(a.id) -
+                    collection.unitIds.indexOf(z.id)
+                );
 
-              return (
-                <CollectionComponent
-                  key={collection.id}
-                  collection={collection}
-                  units={sortedUnits}
-                  index={index}
-                  items={data.items}
-                />
-              );
-            })}
-            {provided.placeholder}
-          </div>
-        )}
-      </Droppable>
-    </DragDropContext>
+                return (
+                  <CollectionComponent
+                    key={collection.id}
+                    collection={collection}
+                    units={sortedUnits}
+                    index={index}
+                    items={data.items}
+                  />
+                );
+              })}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
+    </div>
   );
 };
 

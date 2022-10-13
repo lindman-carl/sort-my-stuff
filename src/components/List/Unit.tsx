@@ -20,7 +20,6 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   margin: 1rem;
-  width: 90vw;
 `;
 
 const TitleContainer = styled.div`

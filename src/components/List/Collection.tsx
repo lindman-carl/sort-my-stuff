@@ -15,16 +15,18 @@ import { Collection, Item, Unit } from "@prisma/client";
 
 // styled components
 const Container = styled.div`
-  min-width: 90vw;
-  margin: 1rem;
+  width: 100%;
+  margin-bottom: 1rem;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   background-color: rgba(164, 189, 151, 1);
   /* background-color: white; */
   box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
 `;
 
 const TitleContainer = styled.div`
+  min-width: 90vw;
   padding: 1rem;
   color: white;
   background-color: green;
@@ -138,13 +140,12 @@ const Collection: React.FC<CollectionProps> = ({
                       );
                     })
                   ) : (
-                    <p>no units</p>
+                    <AddUnit>
+                      <IconButton onClick={handleNewUnit}>
+                        <BiImport size={48} />
+                      </IconButton>
+                    </AddUnit>
                   )}
-                  <AddUnit>
-                    <IconButton onClick={handleNewUnit}>
-                      <BiImport size={48} />
-                    </IconButton>
-                  </AddUnit>
                   {provided.placeholder}
                 </UnitList>
               )}
