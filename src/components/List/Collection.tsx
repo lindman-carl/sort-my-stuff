@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { Droppable, Draggable } from "react-beautiful-dnd";
 
 // components
-import Unit from "./Unit";
+import UnitComponent from "./Unit";
 
 // icons
 import { FaBoxOpen, FaBox } from "react-icons/fa";
@@ -11,7 +11,7 @@ import { BiImport } from "react-icons/bi";
 import { MdDragHandle } from "react-icons/md";
 
 // types
-import { CollectionType, ItemType, UnitType } from "./test-data";
+import { Collection, Item, Unit } from "@prisma/client";
 
 // styled components
 const Container = styled.div`
@@ -61,7 +61,7 @@ const AddUnit = styled.div`
   border: 3px dashed rgba(255, 255, 255, 0.5);
 `;
 
-const Icon = styled.div`
+const IconButton = styled.button`
   /* border: 2px dashed rgba(255, 255, 255, 0.5); */
   border-radius: 50%;
   padding: 2px;
@@ -78,9 +78,9 @@ const UnitList = styled.div``;
 
 // main component
 type CollectionProps = {
-  collection: CollectionType;
-  units: UnitType[];
-  items: ItemType[];
+  collection: Collection;
+  units: Unit[];
+  items: Item[];
   index: number;
 };
 
@@ -91,6 +91,10 @@ const Collection: React.FC<CollectionProps> = ({
   index,
 }) => {
   const [isOpen, setIsOpen] = useState<boolean>(true);
+
+  const handleNewUnit = () => {
+    return "lol";
+  };
 
   return (
     <Draggable draggableId={collection.id} index={index}>
@@ -125,7 +129,7 @@ const Collection: React.FC<CollectionProps> = ({
                         );
 
                       return (
-                        <Unit
+                        <UnitComponent
                           key={unit.id}
                           unit={unit}
                           index={index}
@@ -134,12 +138,13 @@ const Collection: React.FC<CollectionProps> = ({
                       );
                     })
                   ) : (
-                    <AddUnit>
-                      <Icon>
-                        <BiImport size={48} />
-                      </Icon>
-                    </AddUnit>
+                    <p>no units</p>
                   )}
+                  <AddUnit>
+                    <IconButton onClick={handleNewUnit}>
+                      <BiImport size={48} />
+                    </IconButton>
+                  </AddUnit>
                   {provided.placeholder}
                 </UnitList>
               )}

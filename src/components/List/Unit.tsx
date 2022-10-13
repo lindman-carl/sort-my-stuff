@@ -9,10 +9,10 @@ import { MdDragHandle } from "react-icons/md";
 import { TbArrowsDownUp } from "react-icons/tb";
 
 // components
-import Item, { PlaceholderItem } from "./Item";
+import ItemComponent, { PlaceholderItem } from "./Item";
 
 // types
-import { UnitType, ItemType } from "./test-data";
+import { Item, Unit } from "@prisma/client";
 
 const Container = styled.div`
   background-color: rgba(242, 205, 151, 1);
@@ -92,8 +92,8 @@ const ItemList = styled.div<{ isDraggingOver: boolean }>`
 
 // main component
 type UnitProps = {
-  unit: UnitType;
-  items: ItemType[];
+  unit: Unit;
+  items: Item[];
   index: number;
 };
 
@@ -138,7 +138,7 @@ const Unit: React.FC<UnitProps> = ({ unit, items, index }) => {
                   isDraggingOver={snapshot.isDraggingOver}
                 >
                   {items.map((item, index) => (
-                    <Item key={item.id} item={item} index={index} />
+                    <ItemComponent key={item.id} item={item} index={index} />
                   ))}
                   {provided.placeholder}
                   <PlaceholderItem />

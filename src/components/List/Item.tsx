@@ -6,8 +6,8 @@ import { Draggable } from "react-beautiful-dnd";
 import { MdDragHandle } from "react-icons/md";
 
 // types
-import { ItemType } from "./test-data";
 import { FaPlusCircle } from "react-icons/fa";
+import { Item } from "@prisma/client";
 
 // styled componets
 const Container = styled.div<{ isDragDisabled: boolean; isDragging: boolean }>`
@@ -62,7 +62,7 @@ export const PlaceholderItem = () => {
 
 // main component
 type ItemProps = {
-  item: ItemType;
+  item: Item;
   index: number;
   isDragDisabled?: boolean;
 };
