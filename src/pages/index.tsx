@@ -7,7 +7,7 @@ import List from "../components/List";
 
 const Home: NextPage = () => {
   const { data } = trpc.useQuery(["main.getStuff"]);
-  // console.log(data);
+  console.log(data);
 
   return (
     <>
@@ -19,7 +19,7 @@ const Home: NextPage = () => {
 
       <main className="container mx-auto flex flex-col items-center justify-start min-h-screen p-4">
         {data && data.items && data.units && data.collections ? (
-          <List />
+          <List initialData={data} />
         ) : (
           <p>Loading...</p>
         )}

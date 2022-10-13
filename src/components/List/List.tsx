@@ -2,12 +2,19 @@ import React, { useState } from "react";
 import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 
 // components
-import Collection from "./Collection";
+import CollectionComponent from "./Collection";
+
+import { Collection, Unit } from "@prisma/client";
+import { Stuff } from "../../types/types";
 
 // test data
-import { CollectionType, initialData, UnitType } from "./test-data";
+// import { initialData } from "./test-data";
 
-const List = () => {
+type ListProps = {
+  initialData: Stuff;
+};
+
+const List: React.FC<ListProps> = ({ initialData }) => {
   const [data, setData] = useState(initialData);
 
   const handleOnDragEnd = ({
@@ -30,27 +37,22 @@ const List = () => {
 
     // moving collections
     if (type === "collection") {
-      const newCollectionOrder = [...data.collectionOrder];
+      const newCollectionOrder = data.collections.map((el) => el.id);
       newCollectionOrder.splice(source.index, 1);
       newCollectionOrder.splice(destination.index, 0, draggableId);
+      const newCollections = [...data.collections].sort(
+        (a, z) =>
+          newCollectionOrder.indexOf(a.id) - newCollectionOrder.indexOf(z.id)
+      );
       setData((prev) => ({
         ...prev,
-        collectionOrder: newCollectionOrder,
+        collections: newCollections,
       }));
       return;
     }
 
     // moving units
     if (type === "unit") {
-      // const newUnitOrder = [...data.unitOrder];
-      // newUnitOrder.splice(source.index, 1);
-      // newUnitOrder.splice(destination.index, 0, draggableId);
-      // setData((prev) => ({
-      //   ...prev,
-      //   unitOrder: newUnitOrder,
-      // }));
-      // return;
-
       // get source collection
       const sourceCollection = data.collections.find(
         (el) => el.id === source.droppableId
@@ -70,18 +72,18 @@ const List = () => {
         newUnitIds.splice(source.index, 1);
         newUnitIds.splice(destination.index, 0, draggableId);
         // update unit
-        const newCollection: CollectionType = {
+        const newCollection: Collection = {
           ...sourceCollection,
           unitIds: newUnitIds,
         };
         // update units and sort by unitOrder array
+        const collectionOrder = data.collections.map((el) => el.id);
         const newCollections = [
           ...data.collections.filter((el) => el.id !== newCollection.id),
           newCollection,
         ].sort(
           (a, z) =>
-            data.collectionOrder.indexOf(a.id) -
-            data.collectionOrder.indexOf(z.id)
+            collectionOrder.indexOf(a.id) - collectionOrder.indexOf(z.id)
         );
         // set state
         setData((prev) => ({
@@ -95,18 +97,19 @@ const List = () => {
       // update source collection
       const newSourceUnitIds = [...sourceCollection.unitIds];
       newSourceUnitIds.splice(source.index, 1); // remove item from sourceCollection
-      const newSourceCollection: CollectionType = {
+      const newSourceCollection: Collection = {
         ...sourceCollection,
         unitIds: newSourceUnitIds,
       };
       // update destination collection
       const newDestinationUnitIds = [...destinationCollection.unitIds];
       newDestinationUnitIds.splice(destination.index, 0, draggableId);
-      const newDestinationCollection: CollectionType = {
+      const newDestinationCollection: Collection = {
         ...destinationCollection,
         unitIds: newDestinationUnitIds,
       };
       // update collections and sort by collectionOrder
+      const collectionOrder = data.collections.map((el) => el.id);
       const newCollections = [
         ...data.collections.filter(
           (el) =>
@@ -116,9 +119,7 @@ const List = () => {
         newDestinationCollection,
         newSourceCollection,
       ].sort(
-        (a, z) =>
-          data.collectionOrder.indexOf(a.id) -
-          data.collectionOrder.indexOf(z.id)
+        (a, z) => collectionOrder.indexOf(a.id) - collectionOrder.indexOf(z.id)
       );
       setData((prev) => ({
         ...prev,
@@ -147,7 +148,7 @@ const List = () => {
       newItemIds.splice(source.index, 1);
       newItemIds.splice(destination.index, 0, draggableId);
       // update unit
-      const newUnit: UnitType = {
+      const newUnit: Unit = {
         ...sourceUnit,
         itemIds: newItemIds,
       };
@@ -172,14 +173,14 @@ const List = () => {
     // update source unit
     const newSourceItemIds = [...sourceUnit.itemIds];
     newSourceItemIds.splice(source.index, 1);
-    const newSourceUnit: UnitType = {
+    const newSourceUnit: Unit = {
       ...sourceUnit,
       itemIds: newSourceItemIds,
     };
     // update destination unit
     const newDestinationItemIds = [...destinationUnit.itemIds];
     newDestinationItemIds.splice(destination.index, 0, draggableId);
-    const newDestinationUnit: UnitType = {
+    const newDestinationUnit: Unit = {
       ...destinationUnit,
       itemIds: newDestinationItemIds,
     };
@@ -206,13 +207,11 @@ const List = () => {
       <Droppable droppableId="all-units" type="collection" direction="vertical">
         {(provided) => (
           <div {...provided.droppableProps} ref={provided.innerRef}>
-            {data.collectionOrder.map((collectionId, index) => {
-              const collection = data.collections.find(
-                (el) => el.id === collectionId
-              );
+            {data.collections.map(({ id }, index) => {
+              const collection = data.collections.find((el) => el.id === id);
 
               if (!collection) {
-                return <>{collectionId} not found</>;
+                return <>{id} not found</>;
               }
 
               const units = data.units.filter((el) =>
@@ -225,7 +224,7 @@ const List = () => {
               );
 
               return (
-                <Collection
+                <CollectionComponent
                   key={collection.id}
                   collection={collection}
                   units={sortedUnits}
