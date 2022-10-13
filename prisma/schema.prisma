@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-    provider = "sqlite"
+    provider = "postgresql"
     // NOTE: When using postgresql, mysql or sqlserver, uncomment the @db.text annotations in model Account below
     // Further reading: 
     // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
@@ -59,23 +59,40 @@ model VerificationToken {
     @@unique([identifier, token])
 }
 
-model Item {
-    id     String @id @default(cuid())
-    name   String
-    unit   Unit   @relation(fields: [unitId], references: [id])
-    unitId String
+// model Item {
+//     id     String @id @default(cuid())
+//     name   String
+//     unit   Unit   @relation(fields: [unitId], references: [id])
+//     unitId String
+// }
+
+// model Unit {
+//     id           String     @id @default(cuid())
+//     name         String
+//     items        Item[]
+//     collection   Collection @relation(fields: [collectionId], references: [id])
+//     collectionId String
+// }
+
+// model Collection {
+//     id    String @id @default(cuid())
+//     name  String
+//     units Unit[]
+// }
+
+model Collection {
+    id      String   @id @default(cuid())
+    name    String
+    unitIds String[]
 }
 
 model Unit {
-    id           String     @id @default(cuid())
-    name         String
-    items        Item[]
-    collection   Collection @relation(fields: [collectionId], references: [id])
-    collectionId String
+    id      String   @id @default(cuid())
+    name    String
+    itemIds String[]
 }
 
-model Collection {
-    id    String @id @default(cuid())
-    name  String
-    units Unit[]
+model Item {
+    id   String @id @default(cuid())
+    name String
 }
