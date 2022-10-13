@@ -1,55 +1,46 @@
-// types
-import { Item, Unit, Collection } from "../../src/types/types";
+import { Collection, Item, Unit } from "@prisma/client";
 
-// data
-export const initialItems: Item[] = [
+export const initialCollections: Collection[] = [
   {
-    id: "cl8q94z3w00053b6vpj17ucbd",
-    name: "Röda skor",
-    unitId: "cl8q94z3w00023b6v38tpsbu1",
+    id: "collection-1",
+    name: "Hallgarderob",
+    unitIds: ["unit-1", "unit-2"],
   },
   {
-    id: "cl8q94z3w00063b6vv1rhgpd3",
-    name: "Verktygslåda",
-    unitId: "cl8q94z3w00023b6v38tpsbu1",
-  },
-  {
-    id: "cl8q94z3w00073b6vpr3guj8s",
-    name: "Överlevnadskit",
-    unitId: "cl8q94z3w00033b6v5q49k9es",
-  },
-  {
-    id: "cl8q94z3w00083b6vgj2om654",
-    name: "Stekpanna",
-    unitId: "cl8q94z3w00043b6vs0d57me2",
+    id: "collection-2",
+    name: "Vinden",
+    unitIds: ["unit-3"],
   },
 ];
 
 export const initialUnits: Unit[] = [
   {
-    id: "cl8q94z3w00023b6v38tpsbu1",
+    id: "unit-1",
     name: "Låda nr 1",
-    collectionId: "cl8q94z3w00003b6vfoqfiglh",
+    itemIds: ["item-1", "item-2", "item-4"],
   },
   {
-    id: "cl8q94z3w00033b6v5q49k9es",
+    id: "unit-2",
     name: "Låda nr 2",
-    collectionId: "cl8q94z3w00003b6vfoqfiglh",
+    itemIds: ["item-5", "item-6"],
   },
   {
-    id: "cl8q94z3w00043b6vs0d57me2",
+    id: "unit-3",
     name: "Lilla skoskåpet",
-    collectionId: "cl8q94z3w00013b6vopf77u77",
+    itemIds: ["item-3"],
   },
 ];
 
-export const initialCollections: Collection[] = [
-  {
-    id: "cl8q94z3w00003b6vfoqfiglh",
-    name: "Klädkammare",
-  },
-  {
-    id: "cl8q94z3w00013b6vopf77u77",
-    name: "Källaren",
-  },
+export const initialItems: Item[] = [
+  { id: "item-1", name: "Blåa skor" },
+  { id: "item-2", name: "Verktygslåda" },
+  { id: "item-3", name: "Överlevnadskit" },
+  { id: "item-4", name: "Kokkärl" },
+  { id: "item-5", name: "Slängkappa" },
+  { id: "item-6", name: "Harry Potter-bok" },
+];
+
+export const initialCollectionOrder: string[] = [
+  "collection-2",
+  "collection-1",
 ];
