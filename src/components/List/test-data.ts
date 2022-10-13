@@ -1,28 +1,6 @@
-type Data = {
-  collections: CollectionType[];
-  units: UnitType[];
-  items: ItemType[];
-  collectionOrder: string[];
-};
+import { Stuff } from "../../types/types";
 
-export type ItemType = {
-  id: string;
-  name: string;
-};
-
-export type UnitType = {
-  id: string;
-  name: string;
-  itemIds: string[];
-};
-
-export type CollectionType = {
-  id: string;
-  name: string;
-  unitIds: string[];
-};
-
-export const initialData: Data = {
+export const initialData: Stuff = {
   // items
   items: [
     { id: "item-1", name: "Röda skor" },
@@ -50,7 +28,6 @@ export const initialData: Data = {
       itemIds: ["item-3"],
     },
   ],
-  // unitOrder: ["unit-1", "unit-2", "unit-3"],
   // collections
   collections: [
     {
@@ -64,5 +41,4 @@ export const initialData: Data = {
       unitIds: ["unit-3"],
     },
   ],
-  collectionOrder: ["collection-1", "collection-2"],
 };
