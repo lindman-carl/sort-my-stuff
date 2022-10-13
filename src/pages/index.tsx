@@ -3,10 +3,11 @@ import { trpc } from "../utils/trpc";
 
 // types
 import type { NextPage } from "next";
+import List from "../components/List";
 
 const Home: NextPage = () => {
   const { data } = trpc.useQuery(["main.getStuff"]);
-  console.log(data);
+  // console.log(data);
 
   return (
     <>
@@ -17,7 +18,11 @@ const Home: NextPage = () => {
       </Head>
 
       <main className="container mx-auto flex flex-col items-center justify-start min-h-screen p-4">
-        <div>{data ? <div>{JSON.stringify(data)}</div> : <p>Loading..</p>}</div>
+        {data && data.items && data.units && data.collections ? (
+          <List />
+        ) : (
+          <p>Loading...</p>
+        )}
       </main>
     </>
   );
