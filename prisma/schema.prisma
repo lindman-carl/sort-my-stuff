@@ -80,19 +80,28 @@ model VerificationToken {
 //     units Unit[]
 // }
 
+enum Type {
+    COLLECTION
+    UNIT
+    ITEM
+}
+
 model Collection {
     id      String   @id @default(cuid())
     name    String
     unitIds String[]
+    type    Type     @default(COLLECTION)
 }
 
 model Unit {
     id      String   @id @default(cuid())
     name    String
     itemIds String[]
+    type    Type     @default(UNIT)
 }
 
 model Item {
     id   String @id @default(cuid())
     name String
+    type Type   @default(ITEM)
 }
