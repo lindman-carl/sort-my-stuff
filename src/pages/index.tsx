@@ -17,14 +17,12 @@ import { SiBookstack } from "react-icons/si";
 
 const Home: NextPage = () => {
   const { data } = trpc.useQuery(["main.getStuff"]);
+  const collectionCreateMutation = trpc.useMutation(["main.collectionCreate"]);
 
   const [addDrawerOpen, setAddDrawerOpen] = useState<boolean>(false);
   const [currentParents, setCurrentParents] = useState<
     (Collection | Unit)[] | undefined
   >();
-  // const [currentParent, setCurrentParent] = useState<
-  //   Unit | Collection | undefined
-  // >();
 
   const toggleAddDrawer = () => setAddDrawerOpen((prev) => !prev);
 
@@ -39,6 +37,17 @@ const Home: NextPage = () => {
   const addCollectionOnClick = () => {
     setCurrentParents(undefined);
     setAddDrawerOpen(true);
+  };
+
+  const handleSubmit = () => {
+    if (data && data.collections && data.collections[0]) {
+      const newCollection = {
+        name: "Källaren",
+        unitIds: data.collections[0].unitIds,
+      };
+
+      collectionCreateMutation.mutate(newCollection);
+    }
   };
 
   const actions: Action[] = [
@@ -79,6 +88,7 @@ const Home: NextPage = () => {
                 open={addDrawerOpen}
                 onClose={toggleAddDrawer}
                 parents={currentParents}
+                handleSubmit={handleSubmit}
               />
             </>
           ) : (
