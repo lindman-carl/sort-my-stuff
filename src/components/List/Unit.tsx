@@ -9,7 +9,8 @@ import { MdDragHandle } from "react-icons/md";
 import { TbArrowsDownUp } from "react-icons/tb";
 
 // components
-import ItemComponent, { PlaceholderItem } from "./Item";
+import ItemComponent from "./Item";
+import AddItem from "./AddItem";
 
 // types
 import { Item, Unit } from "@prisma/client";
@@ -94,9 +95,10 @@ type UnitProps = {
   unit: Unit;
   items: Item[];
   index: number;
+  addItemOnClick: () => void;
 };
 
-const Unit: React.FC<UnitProps> = ({ unit, items, index }) => {
+const Unit: React.FC<UnitProps> = ({ unit, items, index, addItemOnClick }) => {
   const [isOpen, setIsOpen] = useState<boolean>(true);
 
   if (!items) {
@@ -140,7 +142,7 @@ const Unit: React.FC<UnitProps> = ({ unit, items, index }) => {
                     <ItemComponent key={item.id} item={item} index={index} />
                   ))}
                   {provided.placeholder}
-                  <PlaceholderItem />
+                  <AddItem onClick={addItemOnClick} />
                 </ItemList>
               )}
             </Droppable>

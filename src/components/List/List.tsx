@@ -12,9 +12,10 @@ import { Stuff } from "../../types/types";
 
 type ListProps = {
   initialData: Stuff;
+  addItemOnClick: () => void;
 };
 
-const List: React.FC<ListProps> = ({ initialData }) => {
+const List: React.FC<ListProps> = ({ initialData, addItemOnClick }) => {
   const [data, setData] = useState(initialData);
 
   const handleOnDragEnd = ({
@@ -235,6 +236,7 @@ const List: React.FC<ListProps> = ({ initialData }) => {
                     units={sortedUnits}
                     index={index}
                     items={data.items}
+                    addItemOnClick={addItemOnClick}
                   />
                 );
               })}

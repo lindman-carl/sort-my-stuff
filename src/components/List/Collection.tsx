@@ -15,7 +15,7 @@ import { Collection, Item, Unit } from "@prisma/client";
 
 // styled components
 const Container = styled.div`
-  width: 100%;
+  width: 100vw;
   margin-bottom: 1rem;
   display: flex;
   flex-direction: column;
@@ -84,6 +84,7 @@ type CollectionProps = {
   units: Unit[];
   items: Item[];
   index: number;
+  addItemOnClick: () => void;
 };
 
 const Collection: React.FC<CollectionProps> = ({
@@ -91,6 +92,7 @@ const Collection: React.FC<CollectionProps> = ({
   units,
   items,
   index,
+  addItemOnClick,
 }) => {
   const [isOpen, setIsOpen] = useState<boolean>(true);
 
@@ -136,6 +138,7 @@ const Collection: React.FC<CollectionProps> = ({
                           unit={unit}
                           index={index}
                           items={unitItems}
+                          addItemOnClick={addItemOnClick}
                         />
                       );
                     })

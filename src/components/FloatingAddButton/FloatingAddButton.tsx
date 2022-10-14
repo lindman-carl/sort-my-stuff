@@ -3,11 +3,13 @@ import cn from "classnames";
 
 // icons
 import { MdAdd } from "react-icons/md";
+import { Collection, Unit } from "@prisma/client";
 
 export type Action = {
   label: string;
   icon: React.ReactNode;
   onClick: () => void;
+  parents: (Collection | Unit)[] | undefined;
 };
 
 // main component
