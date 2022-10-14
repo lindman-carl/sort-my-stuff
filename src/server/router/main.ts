@@ -67,7 +67,7 @@ export const mainRouter = createRouter()
     async resolve({ ctx, input }) {
       const unitId = cuid();
 
-      const createUnit = await ctx.prisma.collection.create({
+      const createUnit = await ctx.prisma.unit.create({
         data: {
           name: input.name,
           id: unitId,
