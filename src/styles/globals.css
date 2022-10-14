@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+    background-color: lavender;
+}
+
 .fab-container {
     display: flex;
     list-style: none;

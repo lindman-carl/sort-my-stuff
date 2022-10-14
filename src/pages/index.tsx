@@ -1,10 +1,13 @@
 import { useState } from "react";
 import Head from "next/head";
+import Image from "next/image";
 import { trpc } from "../utils/trpc";
 
+// components
 import List from "../components/List";
 import FloatingAddButton from "../components/FloatingAddButton";
 import AddDrawer from "../components/AddDrawer/AddDrawer";
+import AppBar from "../components/AppBar/AppBar";
 
 // types
 import type { NextPage } from "next";
@@ -47,6 +50,7 @@ const Home: NextPage = () => {
       };
 
       collectionCreateMutation.mutate(newCollection);
+      alert(`${newCollection.name} has been added`);
     }
   };
 
@@ -80,6 +84,7 @@ const Home: NextPage = () => {
       </Head>
 
       <main>
+        <AppBar />
         <div className="flex flex-col items-center justify-start">
           {data && data.items && data.units && data.collections ? (
             <>
@@ -92,7 +97,14 @@ const Home: NextPage = () => {
               />
             </>
           ) : (
-            <p>Loading...</p>
+            <div className="mt-64">
+              <Image
+                src="/tail-spin.svg"
+                alt="loading indicator"
+                height={64}
+                width={64}
+              />
+            </div>
           )}
         </div>
         <FloatingAddButton actions={actions} />

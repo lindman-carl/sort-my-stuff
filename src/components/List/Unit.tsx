@@ -68,10 +68,10 @@ const TitleButton = styled.button<{
   cursor: pointer;
   color: white;
   box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
-  transition: transform 0.2s ease-in-out;
+  transition: transform 0.1s ease-in-out;
 
   &:active {
-    scale: 0.95;
+    transform: scale(0.95);
   }
 `;
 

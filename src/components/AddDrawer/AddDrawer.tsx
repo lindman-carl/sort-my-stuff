@@ -94,7 +94,6 @@ const Title = styled.div`
 `;
 
 // form component
-
 type FormProps = {
   parents: (Collection | Unit)[] | undefined;
   title: string;
@@ -111,7 +110,7 @@ const Form: React.FC<FormProps> = ({ parents, title, handleSubmit }) => {
     <StyledForm onSubmit={onSubmit}>
       <Label title="name">
         <LabelText>
-          Name{" "}
+          Name
           <IoIosHelpCircle color={"blueviolet"} size={22} className="ml-2" />
         </LabelText>
         <NameInput placeholder="Name" />
@@ -119,7 +118,7 @@ const Form: React.FC<FormProps> = ({ parents, title, handleSubmit }) => {
       {parents ? (
         <Label title="parent">
           <LabelText>
-            Parent{" "}
+            Parent
             <IoIosHelpCircle color={"blueviolet"} size={22} className="ml-2" />
           </LabelText>
           <ParentSelect>
