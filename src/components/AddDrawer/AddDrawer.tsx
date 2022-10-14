@@ -4,9 +4,12 @@ import styled from "styled-components";
 import Drawer from "react-modern-drawer";
 import "react-modern-drawer/dist/index.css";
 
+// types
+import { Collection, Unit } from "@prisma/client";
+
 // icons
 import { BsFillCaretDownFill } from "react-icons/bs";
-import { Collection, Unit } from "@prisma/client";
+import { IoIosHelpCircle } from "react-icons/io";
 
 // styled components
 const Container = styled.div`
@@ -36,26 +39,43 @@ const StyledForm = styled.form`
   max-width: 80vw;
 `;
 
-const Label = styled.label`
-  font-weight: 600;
+const Label = styled.label``;
+
+const LabelText = styled.div`
+  width: 6rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: medium;
+  font-weight: 500;
+  margin-left: 0.25rem;
 `;
 
 const NameInput = styled.input`
   width: 100%;
+  min-height: 45px;
   font-weight: 400;
+  font-size: large;
   padding: 0.5rem;
+  border: 1px blueviolet solid;
+  border-radius: 0.5rem;
+  margin-bottom: 0.5rem;
 `;
 
 const ParentSelect = styled.select`
   width: 100%;
+  min-height: 45px;
   font-weight: 400;
+  font-size: large;
   padding: 0.5rem;
+  border: 1px blueviolet solid;
+  border-radius: 0.5rem;
+  margin-bottom: 0.5rem;
 `;
 
 const Submit = styled.input`
   width: 100%;
   height: 3rem;
-  border: 1px solid purple;
   border-radius: 0.5rem;
   background-color: blueviolet;
   color: white;
@@ -67,22 +87,41 @@ const Submit = styled.input`
   cursor: pointer;
 `;
 
+const Title = styled.div`
+  font-size: x-large;
+  font-weight: 600;
+  margin-top: 1rem;
+`;
+
 // form component
 
 type FormProps = {
   parents: (Collection | Unit)[] | undefined;
+  title: string;
+  handleSubmit: () => void;
 };
 
-const Form: React.FC<FormProps> = ({ parents }) => {
+const Form: React.FC<FormProps> = ({ parents, title, handleSubmit }) => {
+  const onSubmit = (e: any) => {
+    e.preventDefault();
+    handleSubmit();
+  };
+
   return (
-    <StyledForm>
+    <StyledForm onSubmit={onSubmit}>
       <Label title="name">
-        Name
+        <LabelText>
+          Name{" "}
+          <IoIosHelpCircle color={"blueviolet"} size={22} className="ml-2" />
+        </LabelText>
         <NameInput placeholder="Name" />
       </Label>
       {parents ? (
         <Label title="parent">
-          Parent
+          <LabelText>
+            Parent{" "}
+            <IoIosHelpCircle color={"blueviolet"} size={22} className="ml-2" />
+          </LabelText>
           <ParentSelect>
             {parents.map((el) => (
               <option key={el.id} value={el.id}>
@@ -92,7 +131,7 @@ const Form: React.FC<FormProps> = ({ parents }) => {
           </ParentSelect>
         </Label>
       ) : null}
-      <Submit type="submit" value="ADD" />
+      <Submit type="submit" value={`ADD ${title.toUpperCase()}`} />
     </StyledForm>
   );
 };
@@ -100,11 +139,34 @@ const Form: React.FC<FormProps> = ({ parents }) => {
 // main component
 type AddDrawerProps = {
   open: boolean;
-  onClose: () => void;
   parents: (Collection | Unit)[] | undefined;
+  onClose: () => void;
+  handleSubmit: () => void;
 };
 
-const AddDrawer: React.FC<AddDrawerProps> = ({ open, onClose, parents }) => {
+const AddDrawer: React.FC<AddDrawerProps> = ({
+  open,
+  onClose,
+  parents,
+  handleSubmit,
+}) => {
+  const getTitle = (parents: (Collection | Unit)[] | undefined) => {
+    if (parents && parents[0]) {
+      switch (parents[0].type) {
+        case "COLLECTION":
+          return "Unit";
+        case "UNIT":
+          return "Item";
+        default:
+          return "Collection";
+      }
+    }
+
+    return "Collection";
+  };
+
+  const title = getTitle(parents);
+
   return (
     <>
       <Drawer
@@ -119,7 +181,8 @@ const AddDrawer: React.FC<AddDrawerProps> = ({ open, onClose, parents }) => {
           <CloseButton onClick={onClose}>
             <BsFillCaretDownFill size={28} color={"#fff"} />
           </CloseButton>
-          <Form parents={parents} />
+          <Title>New {title.toLowerCase()}</Title>
+          <Form parents={parents} title={title} handleSubmit={handleSubmit} />
         </Container>
       </Drawer>
     </>
