@@ -50,7 +50,10 @@ const AppBar = () => {
   return (
     <Container>
       <Title>
-        Sort my&nbsp;<del className="text-slate-300">&nbsp;shit&nbsp;</del>
+        Sort my&nbsp;
+        <del className="text-slate-300 decoration-slate-900 decoration-4">
+          &nbsp;shit&nbsp;
+        </del>
         &nbsp;stuff
       </Title>
       <SaveButton>Save Changes</SaveButton>
