@@ -30,7 +30,10 @@ const FloatingAddButton: React.FC<FloatingAddButtonProps> = ({ actions }) => {
           style={{ transitionDelay: `${index * 25}ms` }}
           className={cn("fab-action", { open })}
           key={action.label}
-          onClick={action.onClick}
+          onClick={() => {
+            action.onClick();
+            toggleOpen();
+          }}
         >
           {action.icon}
           <span className="tooltip">{action.label}</span>
