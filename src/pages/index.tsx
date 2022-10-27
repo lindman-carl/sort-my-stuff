@@ -30,11 +30,18 @@ enum FormEnum {
 }
 
 const Home: NextPage = () => {
+  // trpc
   const { data: initialData } = trpc.useQuery(["main.getStuff"]);
+  const collectionCreate = trpc.useMutation(["main.collectionCreate"]);
+  const unitCreate = trpc.useMutation(["main.unitCreate"]);
+  const itemCreate = trpc.useMutation(["main.itemCreate"]);
 
+  // state
   const [data, setData] = useState<Stuff | undefined>();
   const [bottomDrawerOpen, setBottomDrawerOpen] = useState<boolean>(false);
   const [currentForm, setCurrentForm] = useState<FormEnum>(FormEnum.Collection);
+
+  // functions
   const toggleBottomDrawer = () => setBottomDrawerOpen((prev) => !prev);
 
   useEffect(() => {
@@ -70,7 +77,8 @@ const Home: NextPage = () => {
     },
   ];
 
-  const submitCollection = ({ name }: { name: string }) => {
+  // submit handlers
+  const submitCollection = async ({ name }: { name: string }) => {
     // abort if no data loaded
     if (!data) return;
 
@@ -92,8 +100,12 @@ const Home: NextPage = () => {
     };
     setData(newData);
 
-    // toggle drawer
-    toggleBottomDrawer();
+    // do db stuff
+    collectionCreate.mutate({ name, id });
+    // TODO: Provide feedback to user
+
+    // close drawer
+    setBottomDrawerOpen(false);
   };
 
   const submitUnit = ({
@@ -141,6 +153,18 @@ const Home: NextPage = () => {
       collections: newCollections,
     };
     setData(newData);
+
+    // do db stuff
+    unitCreate.mutate({
+      name,
+      id,
+      collectionId,
+      unitIds: newCollection.unitIds,
+    });
+    // TODO: Provide feedback to user
+
+    // close drawer
+    setBottomDrawerOpen(false);
   };
 
   const submitItem = ({ name, unitId }: { name: string; unitId: string }) => {
@@ -177,6 +201,18 @@ const Home: NextPage = () => {
     };
 
     setData(newData);
+
+    // do db stuff
+    itemCreate.mutate({
+      name,
+      id,
+      unitId,
+      itemIds: newUnit.itemIds,
+    });
+    // TODO: Provide feedback to user
+
+    // close drawer
+    setBottomDrawerOpen(false);
   };
 
   return (

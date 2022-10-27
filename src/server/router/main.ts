@@ -1,6 +1,5 @@
 import { createRouter } from "./context";
 import { z } from "zod";
-import cuid from "cuid";
 
 // types
 import type { Stuff } from "../../types/types";
@@ -43,12 +42,14 @@ export const mainRouter = createRouter()
     },
   })
   .mutation("collectionCreate", {
-    input: z.object({ name: z.string() }),
+    input: z.object({ name: z.string(), id: z.string() }),
     async resolve({ ctx, input }) {
       await ctx.prisma.collection.create({
         data: {
+          id: input.id,
           name: input.name,
           unitIds: [],
+          type: "COLLECTION",
         },
       });
 
@@ -61,16 +62,17 @@ export const mainRouter = createRouter()
   .mutation("unitCreate", {
     input: z.object({
       name: z.string(),
+      id: z.string(),
       collectionId: z.string(),
       unitIds: z.array(z.string()),
     }),
     async resolve({ ctx, input }) {
-      const unitId = cuid();
-
       const createUnit = await ctx.prisma.unit.create({
         data: {
           name: input.name,
-          id: unitId,
+          id: input.id,
+          itemIds: [],
+          type: "UNIT",
         },
       });
 
@@ -79,7 +81,7 @@ export const mainRouter = createRouter()
           id: input.collectionId,
         },
         data: {
-          unitIds: [...input.unitIds, unitId],
+          unitIds: input.unitIds,
         },
       });
 
@@ -90,5 +92,37 @@ export const mainRouter = createRouter()
         message: `Unit ${input.name} in collection ${input.collectionId} created successfully`,
       };
     },
+  })
+  .mutation("itemCreate", {
+    input: z.object({
+      name: z.string(),
+      id: z.string(),
+      unitId: z.string(),
+      itemIds: z.array(z.string()),
+    }),
+    async resolve({ ctx, input }) {
+      const createItem = await ctx.prisma.item.create({
+        data: {
+          name: input.name,
+          id: input.id,
+          type: "ITEM",
+        },
+      });
+
+      const updateUnit = await ctx.prisma.unit.update({
+        where: {
+          id: input.unitId,
+        },
+        data: {
+          itemIds: input.itemIds,
+        },
+      });
+
+      await Promise.all([createItem, updateUnit]);
+
+      return {
+        success: true,
+        message: `Item ${input.name} in unit ${input.unitId} created successfully`,
+      };
+    },
   });
-// .mutation("itemCreate", {});
