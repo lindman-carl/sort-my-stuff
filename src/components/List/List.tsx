@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { DragDropContext, Droppable, DropResult } from "react-beautiful-dnd";
 
 // components
@@ -11,13 +11,12 @@ import { Stuff } from "../../types/types";
 // import { initialData } from "./test-data";
 
 type ListProps = {
-  initialData: Stuff;
+  data: Stuff;
+  setData: React.Dispatch<Stuff>;
   addItemOnClick: () => void;
 };
 
-const List: React.FC<ListProps> = ({ initialData, addItemOnClick }) => {
-  const [data, setData] = useState(initialData);
-
+const List: React.FC<ListProps> = ({ data, setData, addItemOnClick }) => {
   const handleOnDragEnd = ({
     destination,
     source,
@@ -45,10 +44,16 @@ const List: React.FC<ListProps> = ({ initialData, addItemOnClick }) => {
         (a, z) =>
           newCollectionOrder.indexOf(a.id) - newCollectionOrder.indexOf(z.id)
       );
-      setData((prev) => ({
-        ...prev,
+
+      const newData = {
+        ...data,
         collections: newCollections,
-      }));
+      };
+      setData(newData);
+      // setData((prev) => ({
+      //   ...prev,
+      //   collections: newCollections,
+      // }));
       return;
     }
 
@@ -87,10 +92,15 @@ const List: React.FC<ListProps> = ({ initialData, addItemOnClick }) => {
             collectionOrder.indexOf(a.id) - collectionOrder.indexOf(z.id)
         );
         // set state
-        setData((prev) => ({
-          ...prev,
+        // setData((prev) => ({
+        //   ...prev,
+        //   collections: newCollections,
+        // }));
+        const newData = {
+          ...data,
           collections: newCollections,
-        }));
+        };
+        setData(newData);
         return;
       }
 
@@ -122,11 +132,16 @@ const List: React.FC<ListProps> = ({ initialData, addItemOnClick }) => {
       ].sort(
         (a, z) => collectionOrder.indexOf(a.id) - collectionOrder.indexOf(z.id)
       );
-      setData((prev) => ({
-        ...prev,
-        collections: newCollections,
-      }));
+      // setData((prev) => ({
+      //   ...prev,
+      //   collections: newCollections,
+      // }));
 
+      const newData = {
+        ...data,
+        collections: newCollections,
+      };
+      setData(newData);
       return;
     }
 
@@ -164,10 +179,15 @@ const List: React.FC<ListProps> = ({ initialData, addItemOnClick }) => {
       console.log("nuewUnits:", newUnits);
 
       // set state
-      setData((prev) => ({
-        ...prev,
+      // setData((prev) => ({
+      //   ...prev,
+      //   units: newUnits,
+      // }));
+      const newData = {
+        ...data,
         units: newUnits,
-      }));
+      };
+      setData(newData);
       return;
     }
     // move item between units
@@ -197,10 +217,15 @@ const List: React.FC<ListProps> = ({ initialData, addItemOnClick }) => {
     // .sort(
     //   (a, z) => data.unitOrder.indexOf(a.id) - data.unitOrder.indexOf(z.id)
     // );
-    setData((prev) => ({
-      ...prev,
+    // setData((prev) => ({
+    //   ...prev,
+    //   units: newUnits,
+    // }));
+    const newData = {
+      ...data,
       units: newUnits,
-    }));
+    };
+    setData(newData);
   };
 
   return (
