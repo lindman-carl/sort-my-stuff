@@ -8,7 +8,7 @@ const SaveButton = () => (
 
 const AppBar = () => {
   return (
-    <div className="w-[100vw] sticky top-0 bg-slate-500 grid auto-cols-fr shadow z-[999999]">
+    <div className="w-full sticky top-0 bg-slate-500 grid auto-cols-fr shadow z-[999999]">
       <div className="col-start-2 col-span-1">
         <header className="w-full h-full flex justify-center items-center text-center font-extrabold text-white text-2xl">
           Sort my&nbsp;
