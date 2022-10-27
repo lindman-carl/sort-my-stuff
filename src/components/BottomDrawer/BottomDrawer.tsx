@@ -10,6 +10,7 @@ import { Collection, Unit } from "@prisma/client";
 // icons
 import { BsFillCaretDownFill } from "react-icons/bs";
 import { IoIosHelpCircle } from "react-icons/io";
+import { useForm } from "react-hook-form";
 
 // styled components
 const Container = styled.div`
@@ -135,36 +136,55 @@ const Form: React.FC<FormProps> = ({ parents, title, handleSubmit }) => {
   );
 };
 
-// main component
-type AddDrawerProps = {
-  open: boolean;
-  parents: (Collection | Unit)[] | undefined;
-  onClose: () => void;
-  handleSubmit: () => void;
+export type CollectionInput = { name: string };
+type CollectionFormProps = {
+  title: string;
+  onSubmit: (data: CollectionInput) => void;
 };
 
-const AddDrawer: React.FC<AddDrawerProps> = ({
+const CollectionForm: React.FC<CollectionFormProps> = ({ title, onSubmit }) => {
+  const { register, handleSubmit } = useForm<{ name: string }>();
+
+  return (
+    <StyledForm onSubmit={handleSubmit(onSubmit)}>
+      <Label title="name">
+        <LabelText>
+          Name
+          <IoIosHelpCircle color={"blueviolet"} size={22} className="ml-2" />
+        </LabelText>
+        <NameInput placeholder="Name" {...register("name")} />
+      </Label>
+      <Submit type="submit" value={`ADD ${title.toUpperCase()}`} />
+    </StyledForm>
+  );
+};
+
+// main component
+type BottomDrawerProps = {
+  open: boolean;
+  onClose: () => void;
+  children: React.ReactNode;
+};
+
+const BottomDrawer: React.FC<BottomDrawerProps> = ({
   open,
   onClose,
-  parents,
-  handleSubmit,
+  children,
 }) => {
-  const getTitle = (parents: (Collection | Unit)[] | undefined) => {
-    if (parents && parents[0]) {
-      switch (parents[0].type) {
-        case "COLLECTION":
-          return "Unit";
-        case "UNIT":
-          return "Item";
-        default:
-          return "Collection";
-      }
-    }
+  // const getSubmitType = (parents: (Collection | Unit)[] | undefined) => {
+  //   if (parents && parents[0]) {
+  //     switch (parents[0].type) {
+  //       case "COLLECTION":
+  //         return "Unit";
+  //       case "UNIT":
+  //         return "Item";
+  //       default:
+  //         return "Collection";
+  //     }
+  //   }
 
-    return "Collection";
-  };
-
-  const title = getTitle(parents);
+  //   return "Collection";
+  // };
 
   return (
     <>
@@ -180,12 +200,18 @@ const AddDrawer: React.FC<AddDrawerProps> = ({
           <CloseButton onClick={onClose}>
             <BsFillCaretDownFill size={28} color={"#fff"} />
           </CloseButton>
-          <Title>New {title.toLowerCase()}</Title>
-          <Form parents={parents} title={title} handleSubmit={handleSubmit} />
+          {/* <Title>New {formType.toLowerCase()}</Title>
+          {formType === "Collection" && (
+            <CollectionForm
+              title={formType}
+              onSubmit={handleSubmitCollection}
+            />
+          )} */}
+          {children}
         </Container>
       </Drawer>
     </>
   );
 };
 
-export default AddDrawer;
+export default BottomDrawer;
