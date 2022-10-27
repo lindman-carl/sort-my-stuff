@@ -15,7 +15,7 @@ import { Collection, Item, Unit } from "@prisma/client";
 
 // styled components
 const Container = styled.div`
-  width: 100vw;
+  width: 95vw;
   margin-bottom: 1rem;
   display: flex;
   flex-direction: column;
