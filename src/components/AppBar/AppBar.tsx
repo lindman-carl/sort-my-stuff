@@ -1,63 +1,27 @@
 import React from "react";
-import styled from "styled-components";
 
-const Container = styled.div`
-  width: 100vw;
-  position: sticky;
-  top: 0;
-  background-color: slategray;
-  display: grid;
-  grid-auto-columns: minmax(0, 1fr);
-  box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
-`;
-
-const Title = styled.div`
-  display: flex;
-  text-align: center;
-  justify-content: center;
-  align-items: center;
-  grid-column: 2;
-  width: 100%;
-  color: white;
-  font-weight: 800;
-  font-size: x-large;
-`;
-
-const SaveButton = styled.button`
-  border: 2px solid white;
-  border-radius: 0.35rem;
-  background-color: blueviolet;
-  padding: 0.75rem 1rem;
-  grid-column: 3;
-  justify-self: end;
-  margin-right: 2rem;
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-weight: 700;
-  font-size: smaller;
-  color: white;
-  box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
-  transition: all ease-in-out 0.1s;
-  &:active {
-    scale: 0.95;
-  }
-`;
+const SaveButton = () => (
+  <button className="border-2 border-white rounded-md bg-purple-600 py-3 px-4 my-2 mx-8 shadow active:scale-95">
+    <div className="font-bold text-white">Save Changes</div>
+  </button>
+);
 
 const AppBar = () => {
   return (
-    <Container>
-      <Title>
-        Sort my&nbsp;
-        <del className="text-slate-300 decoration-slate-900 decoration-4">
-          &nbsp;shit&nbsp;
-        </del>
-        &nbsp;stuff
-      </Title>
-      <SaveButton>Save Changes</SaveButton>
-    </Container>
+    <div className="w-[100vw] sticky top-0 bg-slate-500 grid auto-cols-fr shadow z-[999999]">
+      <div className="col-start-2 col-span-1">
+        <header className="w-full h-full flex justify-center items-center text-center font-extrabold text-white text-2xl">
+          Sort my&nbsp;
+          <del className="text-slate-300 decoration-slate-900 decoration-4">
+            &nbsp;shit&nbsp;
+          </del>
+          &nbsp;stuff
+        </header>
+      </div>
+      <div className="col-start-3 col-span-1 justify-self-end">
+        <SaveButton />
+      </div>
+    </div>
   );
 };
 
