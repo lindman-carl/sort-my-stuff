@@ -16,7 +16,7 @@ html {
     right: 3rem;
     bottom: 3rem;
     max-height: 52px;
-    z-index: 9999999;
+    z-index: 1999;
 }
 .fab-container.open {
     max-height: max-content;

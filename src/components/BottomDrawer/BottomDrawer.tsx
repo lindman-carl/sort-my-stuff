@@ -47,7 +47,7 @@ const BottomDrawer: React.FC<BottomDrawerProps> = ({
         direction={"bottom"}
         onClose={onClose}
         duration={150}
-        zIndex={100000}
+        zIndex={2000}
         size={"min-content"}
       >
         <Container>
