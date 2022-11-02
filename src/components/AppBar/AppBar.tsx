@@ -1,3 +1,4 @@
+import { signOut, useSession } from "next-auth/react";
 import React from "react";
 
 const SaveButton = () => (
@@ -7,8 +8,15 @@ const SaveButton = () => (
 );
 
 const AppBar = () => {
+  const { data: session } = useSession();
+
   return (
     <div className="w-full sticky top-0 bg-slate-500 grid auto-cols-fr shadow-md z-[2000]">
+      {session && (
+        <div className="col-start-1 col-span-1">
+          <button onClick={() => signOut()}>Sign out</button>
+        </div>
+      )}
       <div className="col-start-2 col-span-1">
         <header className="w-full h-full flex justify-center items-center text-center font-extrabold text-white text-2xl">
           Sort my&nbsp;

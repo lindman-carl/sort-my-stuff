@@ -22,6 +22,7 @@ import { Collection, Item, Unit } from "@prisma/client";
 import { BsBoxSeam, BsDoorOpenFill } from "react-icons/bs";
 import { SiBookstack } from "react-icons/si";
 import ItemForm from "../components/BottomDrawer/ItemForm";
+import { signIn, useSession } from "next-auth/react";
 
 enum FormEnum {
   Collection,
@@ -35,6 +36,9 @@ const Home: NextPage = () => {
   const collectionCreate = trpc.useMutation(["main.collectionCreate"]);
   const unitCreate = trpc.useMutation(["main.unitCreate"]);
   const itemCreate = trpc.useMutation(["main.itemCreate"]);
+
+  // auth
+  const { data: session } = useSession();
 
   // state
   const [data, setData] = useState<Stuff | undefined>();
@@ -214,6 +218,15 @@ const Home: NextPage = () => {
     // close drawer
     setBottomDrawerOpen(false);
   };
+
+  // check auth
+  if (!session) {
+    return (
+      <div>
+        <button onClick={() => signIn()}>Sign in</button>
+      </div>
+    );
+  }
 
   return (
     <>
