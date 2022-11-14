@@ -42,13 +42,17 @@ model Session {
 }
 
 model User {
-    id            String    @id @default(cuid())
-    name          String?
-    email         String?   @unique
-    emailVerified DateTime?
-    image         String?
-    accounts      Account[]
-    sessions      Session[]
+    id               String       @id @default(cuid())
+    name             String?
+    email            String?      @unique
+    emailVerified    DateTime?
+    image            String?
+    accounts         Account[]
+    sessions         Session[]
+    collections      Collection[]
+    units            Unit[]
+    items            Item[]
+    collectionsOrder String[]
 }
 
 model VerificationToken {
@@ -87,21 +91,35 @@ enum Type {
 }
 
 model Collection {
-    id      String   @id @default(cuid())
-    name    String
-    unitIds String[]
-    type    Type     @default(COLLECTION)
+    id         String   @id @default(cuid())
+    user       User     @relation(fields: [userId], references: [id])
+    userId     String
+    name       String
+    units      Unit[]
+    unitsOrder String[]
+    // unitIds String[]
+    type       Type     @default(COLLECTION)
 }
 
 model Unit {
-    id      String   @id @default(cuid())
-    name    String
-    itemIds String[]
-    type    Type     @default(UNIT)
+    id           String     @id @default(cuid())
+    user         User       @relation(fields: [userId], references: [id])
+    userId       String
+    name         String
+    // itemIds String[]
+    collection   Collection @relation(fields: [collectionId], references: [id])
+    collectionId String
+    items        Item[]
+    itemsOrder   String[]
+    type         Type       @default(UNIT)
 }
 
 model Item {
-    id   String @id @default(cuid())
-    name String
-    type Type   @default(ITEM)
+    id     String @id @default(cuid())
+    user   User   @relation(fields: [userId], references: [id])
+    userId String
+    unit   Unit   @relation(fields: [unitId], references: [id])
+    unitId String
+    name   String
+    type   Type   @default(ITEM)
 }
