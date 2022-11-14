@@ -18,7 +18,7 @@ type AppBarProps = {
   saveOrder: () => void;
 };
 
-const AppBar: React.FC<AppBarProps> = ({ saveOrder }) => {
+const AppBar: React.FC<AppBarProps> = ({}) => {
   const { data: session } = useSession();
 
   return (
@@ -38,7 +38,7 @@ const AppBar: React.FC<AppBarProps> = ({ saveOrder }) => {
         </header>
       </div>
       <div className="col-start-3 col-span-1 justify-self-end">
-        <SaveButton onClick={saveOrder} />
+        <SaveButton onClick={() => alert("save button not implemented")} />
       </div>
     </div>
   );
