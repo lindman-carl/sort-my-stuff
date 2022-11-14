@@ -113,7 +113,9 @@ const Unit: React.FC<UnitProps> = ({ unit, items, index, addItemOnClick }) => {
             <DragHandle {...provided.dragHandleProps}>
               <MdDragHandle />
             </DragHandle>
-            <Title>{unit.name}</Title>
+            <Title>
+              {unit.name} - {unit.id}
+            </Title>
             <TitleButtons>
               <TitleButton left>
                 <TbArrowsDownUp size={28} />
