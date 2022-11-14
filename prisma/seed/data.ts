@@ -1,17 +1,27 @@
-import { Collection, Item, Unit } from "@prisma/client";
+import { Collection, Item, Unit, User } from "@prisma/client";
+
+export const testUser: User = {
+  email: "test-user@gmail.com",
+  id: "test-user",
+  name: "test-user",
+  emailVerified: null,
+  image: null,
+};
 
 export const initialCollections: Collection[] = [
   {
     id: "collection-1",
-    name: "Hallgarderob",
-    unitIds: ["unit-1", "unit-2"],
+    name: "Garderob",
     type: "COLLECTION",
+    userId: testUser.id,
+    unitsOrder: ["unit-1"],
   },
   {
     id: "collection-2",
-    name: "Vinden",
-    unitIds: ["unit-3"],
+    name: "Boden",
     type: "COLLECTION",
+    userId: testUser.id,
+    unitsOrder: ["unit-2", "unit-3"],
   },
 ];
 
@@ -19,30 +29,72 @@ export const initialUnits: Unit[] = [
   {
     id: "unit-1",
     name: "Låda nr 1",
-    itemIds: ["item-1", "item-2", "item-4"],
+    userId: testUser.id,
+    collectionId: "collection-1",
     type: "UNIT",
+    itemsOrder: ["item-1", "item-2"],
   },
   {
     id: "unit-2",
     name: "Låda nr 2",
-    itemIds: ["item-5", "item-6"],
+    userId: testUser.id,
+    collectionId: "collection-2",
     type: "UNIT",
+    itemsOrder: ["item-3", "item-4"],
   },
   {
     id: "unit-3",
     name: "Lilla skoskåpet",
-    itemIds: ["item-3"],
+    userId: testUser.id,
+    collectionId: "collection-2",
     type: "UNIT",
+    itemsOrder: ["item-6", "item-5"],
   },
 ];
 
 export const initialItems: Item[] = [
-  { id: "item-1", name: "Blåa skor", type: "ITEM" },
-  { id: "item-2", name: "Verktygslåda", type: "ITEM" },
-  { id: "item-3", name: "Överlevnadskit", type: "ITEM" },
-  { id: "item-4", name: "Kokkärl", type: "ITEM" },
-  { id: "item-5", name: "Slängkappa", type: "ITEM" },
-  { id: "item-6", name: "Harry Potter-bok", type: "ITEM" },
+  {
+    id: "item-1",
+    name: "Blåa skor",
+    type: "ITEM",
+    userId: testUser.id,
+    unitId: "unit-1",
+  },
+  {
+    id: "item-2",
+    name: "Verktygslåda",
+    type: "ITEM",
+    userId: testUser.id,
+    unitId: "unit-1",
+  },
+  {
+    id: "item-3",
+    name: "Överlevnadskit",
+    type: "ITEM",
+    userId: testUser.id,
+    unitId: "unit-2",
+  },
+  {
+    id: "item-4",
+    name: "Kokkärl",
+    type: "ITEM",
+    userId: testUser.id,
+    unitId: "unit-2",
+  },
+  {
+    id: "item-5",
+    name: "Slängkappa",
+    type: "ITEM",
+    userId: testUser.id,
+    unitId: "unit-3",
+  },
+  {
+    id: "item-6",
+    name: "Harry Potter-bok",
+    type: "ITEM",
+    userId: testUser.id,
+    unitId: "unit-3",
+  },
 ];
 
 export const initialCollectionOrder: string[] = [
