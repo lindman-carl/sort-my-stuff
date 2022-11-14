@@ -1,13 +1,24 @@
 import { signOut, useSession } from "next-auth/react";
 import React from "react";
 
-const SaveButton = () => (
-  <button className="border-2 border-white rounded-md bg-purple-600 py-3 px-4 my-2 mx-8 shadow active:scale-95">
+type SaveButtonProps = {
+  onClick: () => void;
+};
+
+const SaveButton: React.FC<SaveButtonProps> = ({ onClick }) => (
+  <button
+    onClick={onClick}
+    className="border-2 border-white rounded-md bg-purple-600 py-3 px-4 my-2 mx-8 shadow active:scale-95"
+  >
     <div className="font-bold text-white">Save Changes</div>
   </button>
 );
 
-const AppBar = () => {
+type AppBarProps = {
+  saveOrder: () => void;
+};
+
+const AppBar: React.FC<AppBarProps> = ({ saveOrder }) => {
   const { data: session } = useSession();
 
   return (
@@ -27,7 +38,7 @@ const AppBar = () => {
         </header>
       </div>
       <div className="col-start-3 col-span-1 justify-self-end">
-        <SaveButton />
+        <SaveButton onClick={saveOrder} />
       </div>
     </div>
   );
