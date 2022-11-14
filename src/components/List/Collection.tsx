@@ -108,7 +108,9 @@ const Collection: React.FC<CollectionProps> = ({
             <DragHandle {...provided.dragHandleProps}>
               <MdDragHandle />
             </DragHandle>
-            <Title>{collection.name}</Title>
+            <Title>
+              {collection.name} - {collection.id}
+            </Title>
             <BoxButton onClick={() => setIsOpen((prev) => !prev)}>
               {isOpen ? <FaBox size={24} /> : <FaBoxOpen size={24} />}
             </BoxButton>
@@ -125,11 +127,11 @@ const Collection: React.FC<CollectionProps> = ({
                   {units && units.length > 0 ? (
                     units.map((unit, index) => {
                       const unitItems = items
-                        .filter((el) => unit.itemIds.includes(el.id))
+                        .filter((el) => el.unitId === unit.id)
                         .sort(
                           (a, z) =>
-                            unit.itemIds.indexOf(a.id) -
-                            unit.itemIds.indexOf(z.id)
+                            unit.itemsOrder.indexOf(a.id) -
+                            unit.itemsOrder.indexOf(z.id)
                         );
 
                       return (
