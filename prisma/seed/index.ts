@@ -1,11 +1,23 @@
 import { PrismaClient } from "@prisma/client";
 
 // data
-import { initialCollections, initialUnits, initialItems } from "./data";
+import {
+  initialCollections,
+  initialUnits,
+  initialItems,
+  testUser,
+} from "./data";
 
 const prisma = new PrismaClient();
 
 const runSeeders = async () => {
+  // User
+  await prisma.user.upsert({
+    where: { id: testUser.id },
+    update: {},
+    create: testUser,
+  });
+
   // Collections
   await Promise.all(
     initialCollections.map(async (collection) =>
