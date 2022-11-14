@@ -16,10 +16,11 @@
 //   name: string;
 //   units?: string[];
 // };
-import { Item, Unit, Collection } from "@prisma/client";
+import { Item, Unit, Collection, User } from "@prisma/client";
 
 export type Stuff = {
   items: Item[];
   units: Unit[];
   collections: Collection[];
+  user: User;
 };
