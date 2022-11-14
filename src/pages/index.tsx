@@ -32,10 +32,12 @@ enum FormEnum {
 
 const Home: NextPage = () => {
   // trpc
-  const { data: initialData } = trpc.useQuery(["main.getStuff"]);
+  const { data: initialData } = trpc.useQuery(["main.getUserStuff"]);
   const collectionCreate = trpc.useMutation(["main.collectionCreate"]);
   const unitCreate = trpc.useMutation(["main.unitCreate"]);
   const itemCreate = trpc.useMutation(["main.itemCreate"]);
+  const updateUnitsOrder = trpc.useMutation(["main.updateUnitsOrder"]);
+  const updateItemsOrder = trpc.useMutation(["main.updateItemsOrder"]);
 
   // auth
   const { data: session } = useSession();
@@ -45,12 +47,55 @@ const Home: NextPage = () => {
   const [bottomDrawerOpen, setBottomDrawerOpen] = useState<boolean>(false);
   const [currentForm, setCurrentForm] = useState<FormEnum>(FormEnum.Collection);
 
-  // functions
-  const toggleBottomDrawer = () => setBottomDrawerOpen((prev) => !prev);
-
   useEffect(() => {
+    // make state from fetched data
+    // this is needed to be able to update the state
     if (initialData) {
+      // check unitsOrder
+      if (initialData.collections) {
+        // create new collectionsOrder if its not the same length as collections
+        if (
+          !initialData.user.collectionsOrder ||
+          initialData.user.collectionsOrder.length !==
+            initialData.collections.length
+        ) {
+          const collectionsIds = initialData.collections.map((el) => el.id);
+          initialData.user.collectionsOrder = collectionsIds;
+        }
+
+        // sort collections by collectionsOrder
+        initialData.collections.sort(
+          (a, z) =>
+            initialData.user.collectionsOrder.indexOf(a.id) -
+            initialData.user.collectionsOrder.indexOf(z.id)
+        );
+
+        for (const collection of initialData.collections) {
+          if (collection.unitsOrder.length === 0) {
+            const unitsOrder = initialData.units
+              .filter((el) => el.collectionId === collection.id) // filter by collection id
+              .map((el) => el.id); // return unit id
+
+            collection.unitsOrder = unitsOrder;
+            console.log(unitsOrder);
+          }
+        }
+      }
+
+      // check items order
+      for (const unit of initialData.units) {
+        if (unit.itemsOrder.length === 0) {
+          const itemsOrder = initialData.items
+            .filter((el) => el.unitId === unit.id)
+            .map((el) => el.id);
+
+          unit.itemsOrder = itemsOrder;
+          console.log(itemsOrder);
+        }
+      }
+
       setData(initialData);
+      console.log(initialData);
     }
   }, [initialData]);
 
@@ -81,10 +126,44 @@ const Home: NextPage = () => {
     },
   ];
 
+  // functions
+  const toggleBottomDrawer = () => setBottomDrawerOpen((prev) => !prev);
+
+  const saveOrder = () => {
+    if (data?.collections && data.units) {
+      for (const collection of data?.collections) {
+        const unitsOrder = data.units
+          .filter((el) => el.collectionId === collection.id)
+          .map((el) => el.id);
+
+        updateUnitsOrder.mutate({
+          collectionId: collection.id,
+          newUnitsOrder: unitsOrder,
+        });
+      }
+    }
+
+    if (data?.units && data?.items) {
+      for (const unit of data?.units) {
+        const itemsOrder = data.items
+          .filter((el) => el.unitId === unit.id)
+          .map((el) => el.id);
+
+        updateItemsOrder.mutate({
+          unitId: unit.id,
+          newItemsOrder: itemsOrder,
+        });
+      }
+    }
+  };
+
   // submit handlers
   const submitCollection = async ({ name }: { name: string }) => {
     // abort if no data loaded
     if (!data) return;
+
+    // check for user session
+    if (!session || !session?.user?.id) return;
 
     // create new collection
     const id = cuid();
@@ -93,7 +172,8 @@ const Home: NextPage = () => {
       id,
       name,
       type: "COLLECTION",
-      unitIds: [],
+      userId: session.user.id,
+      unitsOrder: [],
     };
 
     // add collection to data
@@ -122,6 +202,9 @@ const Home: NextPage = () => {
     // check for data
     if (!data) return;
 
+    // check for user session
+    if (!session || !session?.user?.id) return;
+
     // create new unit
     const id = cuid();
 
@@ -129,7 +212,9 @@ const Home: NextPage = () => {
       id,
       name,
       type: "UNIT",
-      itemIds: [],
+      userId: session.user.id,
+      itemsOrder: [],
+      collectionId,
     };
 
     // get old collection
@@ -137,24 +222,11 @@ const Home: NextPage = () => {
     const oldCollection = data.collections.find((el) => el.id === collectionId);
     if (!oldCollection) return;
 
-    // add unit to collection
-    const newCollection: Collection = {
-      ...oldCollection,
-      unitIds: [...oldCollection.unitIds, newUnit.id] || [newUnit.id],
-    };
-    // update collections and sort
-    const collectionOrder = data.collections.map((el) => el.id);
-    const newCollections = [
-      ...data.collections.filter((el) => el.id !== collectionId),
-      newCollection,
-    ].sort(
-      (a, z) => collectionOrder.indexOf(a.id) - collectionOrder.indexOf(z.id)
-    );
     // set data
     const newData = {
       ...data,
       units: [...data.units, newUnit],
-      collections: newCollections,
+      // collections: newCollections,
     };
     setData(newData);
 
@@ -163,7 +235,7 @@ const Home: NextPage = () => {
       name,
       id,
       collectionId,
-      unitIds: newCollection.unitIds,
+      unitsOrder: [id, ...oldCollection.unitsOrder],
     });
     // TODO: Provide feedback to user
 
@@ -174,6 +246,9 @@ const Home: NextPage = () => {
   const submitItem = ({ name, unitId }: { name: string; unitId: string }) => {
     if (!data) return;
 
+    // check for user session
+    if (!session || !session?.user?.id) return;
+
     // create new item
     const id = cuid();
 
@@ -181,26 +256,27 @@ const Home: NextPage = () => {
       id,
       name,
       type: "ITEM",
+      userId: session.user.id,
+      unitId,
     };
 
     // add item to unit
     // get unit
-    const oldUnit = data.units.find((el) => el.id === unitId);
-    if (!oldUnit) return;
+    // const oldUnit = data.units.find((el) => el.id === unitId);
+    // if (!oldUnit) return;
 
-    // add item to unit
-    const newUnit: Unit = {
-      ...oldUnit,
-      itemIds: [...oldUnit.itemIds, newItem.id] || [newItem.id],
-    };
+    // // add item to unit
+    // const newUnit: Unit = {
+    //   ...oldUnit,
+    //   itemIds: [...oldUnit.itemIds, newItem.id] || [newItem.id],
+    // };
 
-    // update units
-    const newUnits = [...data.units.filter((el) => el.id !== unitId), newUnit];
+    // // update units
+    // const newUnits = [...data.units.filter((el) => el.id !== unitId), newUnit];
 
     // set data
     const newData = {
       ...data,
-      units: newUnits,
       items: [...data.items, newItem],
     };
 
@@ -211,7 +287,6 @@ const Home: NextPage = () => {
       name,
       id,
       unitId,
-      itemIds: newUnit.itemIds,
     });
     // TODO: Provide feedback to user
 
@@ -237,7 +312,7 @@ const Home: NextPage = () => {
       </Head>
 
       <main>
-        <AppBar />
+        <AppBar saveOrder={saveOrder} />
         <div className="flex flex-col items-center justify-start">
           {data && data.items && data.units && data.collections ? (
             <>
