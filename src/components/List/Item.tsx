@@ -47,7 +47,7 @@ const Item: React.FC<ItemProps> = ({ item, index, isDragDisabled = false }) => {
           <DragHandle {...provided.dragHandleProps}>
             <MdDragHandle />
           </DragHandle>
-          {item.name}
+          {item.name} - {item.id}
         </Container>
       )}
     </Draggable>
