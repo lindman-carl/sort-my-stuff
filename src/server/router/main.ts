@@ -262,3 +262,21 @@ export const mainRouter = createRouter()
       };
     },
   });
+// .mutation("updateManyItems", {
+//   input: z.object({
+//     ids: z.array(z.string()),
+//   }),
+//   async resolve({ ctx, input }) {
+//     // check for user session
+//     if (!ctx.session || !ctx.session?.user?.id) return;
+
+//     const updateManyItems = await ctx.prisma.item.updateMany({
+//       where: {
+//         id: {
+//           in: input.ids,
+//         },
+//       },
+//       data: {},
+//     });
+//   },
+// });

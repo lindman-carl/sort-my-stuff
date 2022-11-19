@@ -30,20 +30,32 @@ enum FormEnum {
   Item,
 }
 
+// type IdArrays = {
+//   items: string[];
+//   units: string[];
+//   collections: string[];
+// };
+
 const Home: NextPage = () => {
   // trpc
   const { data: initialData } = trpc.useQuery(["main.getUserStuff"]);
   const collectionCreate = trpc.useMutation(["main.collectionCreate"]);
   const unitCreate = trpc.useMutation(["main.unitCreate"]);
   const itemCreate = trpc.useMutation(["main.itemCreate"]);
-  const updateUnitsOrder = trpc.useMutation(["main.updateUnitsOrder"]);
-  const updateItemsOrder = trpc.useMutation(["main.updateItemsOrder"]);
+  // const updateUnitsOrder = trpc.useMutation(["main.updateUnitsOrder"]);
+  // const updateItemsOrder = trpc.useMutation(["main.updateItemsOrder"]);
 
   // auth
   const { data: session } = useSession();
 
   // state
   const [data, setData] = useState<Stuff | undefined>();
+  // const [modifiedIds, setModifiedIds] = useState<IdArrays>({
+  //   items: [],
+  //   units: [],
+  //   collections: [],
+  // });
+
   const [bottomDrawerOpen, setBottomDrawerOpen] = useState<boolean>(false);
   const [currentForm, setCurrentForm] = useState<FormEnum>(FormEnum.Collection);
 
@@ -129,35 +141,36 @@ const Home: NextPage = () => {
   // functions
   const toggleBottomDrawer = () => setBottomDrawerOpen((prev) => !prev);
 
-  const saveOrder = () => {
-    if (data?.collections && data.units) {
-      for (const collection of data?.collections) {
-        const unitsOrder = data.units
-          .filter((el) => el.collectionId === collection.id)
-          .map((el) => el.id);
+  // const saveOrder = () => {
+  //   if (data?.collections && data.units) {
+  //     for (const collection of data?.collections) {
+  //       const unitsOrder = data.units
+  //         .filter((el) => el.collectionId === collection.id)
+  //         .map((el) => el.id);
 
-        updateUnitsOrder.mutate({
-          collectionId: collection.id,
-          newUnitsOrder: unitsOrder,
-        });
-      }
-    }
+  //       updateUnitsOrder.mutate({
+  //         collectionId: collection.id,
+  //         newUnitsOrder: unitsOrder,
+  //       });
+  //     }
+  //   }
 
-    if (data?.units && data?.items) {
-      for (const unit of data?.units) {
-        const itemsOrder = data.items
-          .filter((el) => el.unitId === unit.id)
-          .map((el) => el.id);
+  //   if (data?.units && data?.items) {
+  //     for (const unit of data?.units) {
+  //       const itemsOrder = data.items
+  //         .filter((el) => el.unitId === unit.id)
+  //         .map((el) => el.id);
 
-        updateItemsOrder.mutate({
-          unitId: unit.id,
-          newItemsOrder: itemsOrder,
-        });
-      }
-    }
-  };
+  //       updateItemsOrder.mutate({
+  //         unitId: unit.id,
+  //         newItemsOrder: itemsOrder,
+  //       });
+  //     }
+  //   }
+  // };
 
   // submit handlers
+
   const submitCollection = async ({ name }: { name: string }) => {
     // abort if no data loaded
     if (!data) return;
@@ -294,6 +307,18 @@ const Home: NextPage = () => {
     setBottomDrawerOpen(false);
   };
 
+  // const saveState = () => {
+  //   for (const [key, ids] of Object.entries(modifiedIds)) {
+  //     if (ids.length === 0) continue;
+  //   }
+
+  //   // update items unitId
+
+  //   // update units collectionId and itemsOrder
+
+  //   // update collectionOrder
+  // };
+
   // check auth
   if (!session) {
     return (
@@ -312,7 +337,9 @@ const Home: NextPage = () => {
       </Head>
 
       <main>
-        <AppBar saveOrder={saveOrder} />
+        <AppBar
+          saveOrder={() => alert("save changes button is not yet implemented")}
+        />
         <div className="flex flex-col items-center justify-start">
           {data && data.items && data.units && data.collections ? (
             <>
