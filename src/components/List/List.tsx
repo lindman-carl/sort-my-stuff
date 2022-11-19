@@ -8,9 +8,6 @@ import { Collection, Unit } from "@prisma/client";
 import { Stuff } from "../../types/types";
 import { trpc } from "../../utils/trpc";
 
-// test data
-// import { initialData } from "./test-data";
-
 type ListProps = {
   data: Stuff;
   setData: React.Dispatch<Stuff>;
