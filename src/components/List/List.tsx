@@ -6,25 +6,38 @@ import CollectionComponent from "./Collection";
 
 import { Collection, Unit } from "@prisma/client";
 import { Stuff } from "../../types/types";
-import { trpc } from "../../utils/trpc";
 
 type ListProps = {
   data: Stuff;
   setData: React.Dispatch<Stuff>;
   addItemOnClick: () => void;
+  updateUnitsOrder: (collectionId: string, newUnitsOrder: string[]) => void;
+  updateCollectionsOrder: (newCollectionsOrder: string[]) => void;
+  updateItemsOrder: (unitId: string, newItemsOrder: string[]) => void;
+  updateUnitCollectionId: (unitId: string, newCollectionId: string) => void;
+  updateItemUnitId: (itemId: string, newUnitId: string) => void;
 };
 
-const List: React.FC<ListProps> = ({ data, setData, addItemOnClick }) => {
+const List: React.FC<ListProps> = ({
+  data,
+  setData,
+  addItemOnClick,
+  updateUnitsOrder,
+  updateCollectionsOrder,
+  updateItemsOrder,
+  updateUnitCollectionId,
+  updateItemUnitId,
+}) => {
   // mutations
-  const updateUnitsOrder = trpc.useMutation(["main.updateUnitsOrder"]);
-  const updateCollectionsOrder = trpc.useMutation([
-    "main.updateCollectionsOrder",
-  ]);
-  const updateItemsOrder = trpc.useMutation(["main.updateItemsOrder"]);
-  const updateUnitCollectionId = trpc.useMutation([
-    "main.updateUnitCollectionId",
-  ]);
-  const updateItemUnitId = trpc.useMutation(["main.updateItemUnitId"]);
+  // const updateUnitsOrder = trpc.useMutation(["main.updateUnitsOrder"]);
+  // const updateCollectionsOrder = trpc.useMutation([
+  //   "main.updateCollectionsOrder",
+  // ]);
+  // const updateItemsOrder = trpc.useMutation(["main.updateItemsOrder"]);
+  // const updateUnitCollectionId = trpc.useMutation([
+  //   "main.updateUnitCollectionId",
+  // ]);
+  // const updateItemUnitId = trpc.useMutation(["main.updateItemUnitId"]);
 
   const handleOnDragEnd = ({
     destination,
@@ -46,12 +59,12 @@ const List: React.FC<ListProps> = ({ data, setData, addItemOnClick }) => {
 
     // moving collections
     if (type === "collection") {
-      const newCollectionOrder = data.collections.map((el) => el.id);
-      newCollectionOrder.splice(source.index, 1);
-      newCollectionOrder.splice(destination.index, 0, draggableId);
+      const newCollectionsOrder = data.collections.map((el) => el.id);
+      newCollectionsOrder.splice(source.index, 1);
+      newCollectionsOrder.splice(destination.index, 0, draggableId);
       const newCollections = [...data.collections].sort(
         (a, z) =>
-          newCollectionOrder.indexOf(a.id) - newCollectionOrder.indexOf(z.id)
+          newCollectionsOrder.indexOf(a.id) - newCollectionsOrder.indexOf(z.id)
       );
 
       const newData = {
@@ -59,9 +72,7 @@ const List: React.FC<ListProps> = ({ data, setData, addItemOnClick }) => {
         collections: newCollections,
       };
       setData(newData);
-      updateCollectionsOrder.mutate({
-        newCollectionsOrder: newCollectionOrder,
-      });
+      updateCollectionsOrder(newCollectionsOrder);
       return;
     }
 
@@ -118,10 +129,7 @@ const List: React.FC<ListProps> = ({ data, setData, addItemOnClick }) => {
           collections: newCollections,
         };
         setData(newData);
-        updateUnitsOrder.mutate({
-          collectionId: sourceCollection.id,
-          newUnitsOrder,
-        });
+        updateUnitsOrder(sourceCollection.id, newUnitsOrder);
 
         return;
       }
@@ -176,18 +184,9 @@ const List: React.FC<ListProps> = ({ data, setData, addItemOnClick }) => {
       console.log("destination:", newDestinationUnitsOrder);
 
       // mutate db
-      updateUnitCollectionId.mutate({
-        unitId: unitToUpdate.id,
-        newCollectionId: destinationCollection.id,
-      });
-      updateUnitsOrder.mutate({
-        collectionId: sourceCollection.id,
-        newUnitsOrder: newSourceUnitsOrder,
-      });
-      updateUnitsOrder.mutate({
-        collectionId: destinationCollection.id,
-        newUnitsOrder: newDestinationUnitsOrder,
-      });
+      updateUnitCollectionId(unitToUpdate.id, destinationCollection.id);
+      updateUnitsOrder(sourceCollection.id, newSourceUnitsOrder);
+      updateUnitsOrder(destinationCollection.id, newDestinationUnitsOrder);
 
       return;
     }
@@ -238,7 +237,7 @@ const List: React.FC<ListProps> = ({ data, setData, addItemOnClick }) => {
       };
       setData(newData);
       // mutate db
-      updateItemsOrder.mutate({ newItemsOrder, unitId: newUnit.id });
+      updateItemsOrder(newUnit.id, newItemsOrder);
       return;
     }
 
@@ -286,18 +285,9 @@ const List: React.FC<ListProps> = ({ data, setData, addItemOnClick }) => {
     setData(newData);
 
     // mutate db
-    updateItemUnitId.mutate({
-      itemId: itemToUpdate.id,
-      newUnitId: itemToUpdate.unitId,
-    });
-    updateItemsOrder.mutate({
-      unitId: sourceUnit.id,
-      newItemsOrder: newSourceItemsOrder,
-    });
-    updateItemsOrder.mutate({
-      unitId: destinationUnit.id,
-      newItemsOrder: newDesitinationItemsOrder,
-    });
+    updateItemUnitId(itemToUpdate.id, itemToUpdate.unitId);
+    updateItemsOrder(sourceUnit.id, newSourceItemsOrder);
+    updateItemsOrder(destinationUnit.id, newDesitinationItemsOrder);
   };
 
   return (

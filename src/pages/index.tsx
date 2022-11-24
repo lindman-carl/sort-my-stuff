@@ -8,7 +8,7 @@ import cuid from "cuid";
 import List from "../components/List";
 import FloatingAddButton from "../components/FloatingAddButton";
 import BottomDrawer from "../components/BottomDrawer/BottomDrawer";
-import AppBar from "../components/AppBar/AppBar";
+import AppBar, { LoadingState } from "../components/AppBar/AppBar";
 import CollectionForm from "../components/BottomDrawer/CollectionForm";
 import UnitForm from "../components/BottomDrawer/UnitForm";
 
@@ -37,19 +37,59 @@ enum FormEnum {
 // };
 
 const Home: NextPage = () => {
-  // trpc
+  // trpc mutations
   const { data: initialData } = trpc.useQuery(["main.getUserStuff"]);
   const collectionCreate = trpc.useMutation(["main.collectionCreate"]);
   const unitCreate = trpc.useMutation(["main.unitCreate"]);
   const itemCreate = trpc.useMutation(["main.itemCreate"]);
-  // const updateUnitsOrder = trpc.useMutation(["main.updateUnitsOrder"]);
-  // const updateItemsOrder = trpc.useMutation(["main.updateItemsOrder"]);
+  const updateUnitsOrder = trpc.useMutation(["main.updateUnitsOrder"]);
+  const updateCollectionsOrder = trpc.useMutation([
+    "main.updateCollectionsOrder",
+  ]);
+  const updateItemsOrder = trpc.useMutation(["main.updateItemsOrder"]);
+  const updateUnitCollectionId = trpc.useMutation([
+    "main.updateUnitCollectionId",
+  ]);
+  const updateItemUnitId = trpc.useMutation(["main.updateItemUnitId"]);
+
+  const mutateUnitsOrder = (collectionId: string, newUnitsOrder: string[]) => {
+    updateUnitsOrder.mutate({
+      collectionId,
+      newUnitsOrder,
+    });
+  };
+  const mutateCollectionsOrder = (newCollectionsOrder: string[]) => {
+    updateCollectionsOrder.mutate({
+      newCollectionsOrder,
+    });
+  };
+  const mutateItemsOrder = (unitId: string, newItemsOrder: string[]) => {
+    updateItemsOrder.mutate({
+      unitId,
+      newItemsOrder,
+    });
+  };
+  const mutateUnitCollectionId = (unitId: string, newCollectionId: string) => {
+    updateUnitCollectionId.mutate({
+      unitId,
+      newCollectionId,
+    });
+  };
+  const mutateItemUnitId = (itemId: string, newUnitId: string) => {
+    updateItemUnitId.mutate({
+      itemId,
+      newUnitId,
+    });
+  };
 
   // auth
   const { data: session } = useSession();
 
   // state
   const [data, setData] = useState<Stuff | undefined>();
+  const [loadingState, setLoadingState] = useState<LoadingState>(
+    LoadingState.success
+  );
   // const [modifiedIds, setModifiedIds] = useState<IdArrays>({
   //   items: [],
   //   units: [],
@@ -110,6 +150,57 @@ const Home: NextPage = () => {
       console.log(initialData);
     }
   }, [initialData]);
+
+  // event handler for loading state
+  useEffect(() => {
+    console.log(
+      "status",
+      collectionCreate.status,
+      unitCreate.status,
+      itemCreate.status
+    );
+
+    if (
+      collectionCreate.status === "error" ||
+      unitCreate.status === "error" ||
+      itemCreate.status === "error" ||
+      updateCollectionsOrder.status === "error" ||
+      updateUnitsOrder.status === "error" ||
+      updateItemsOrder.status === "error" ||
+      updateUnitCollectionId.status === "error" ||
+      updateItemUnitId.status === "error"
+    ) {
+      setLoadingState(LoadingState.failed);
+    } else if (
+      collectionCreate.status === "loading" ||
+      unitCreate.status === "loading" ||
+      itemCreate.status === "loading" ||
+      updateCollectionsOrder.status === "loading" ||
+      updateUnitsOrder.status === "loading" ||
+      updateItemsOrder.status === "loading" ||
+      updateUnitCollectionId.status === "loading" ||
+      updateItemUnitId.status === "loading"
+    ) {
+      setLoadingState(LoadingState.loading);
+    } else {
+      setLoadingState(LoadingState.success);
+    }
+    // else if (
+    //   (collectionCreate.status === "success" ||
+    //     collectionCreate.status === "idle") &&
+    //   (unitCreate.status === "success" || unitCreate.status === "idle") &&
+    //   (itemCreate.status === "success" || itemCreate.status === "idle")
+    // )
+  }, [
+    collectionCreate.status,
+    unitCreate.status,
+    itemCreate.status,
+    updateCollectionsOrder.status,
+    updateUnitsOrder.status,
+    updateItemsOrder.status,
+    updateUnitCollectionId.status,
+    updateItemUnitId.status,
+  ]);
 
   const actions: Action[] = [
     {
@@ -199,7 +290,6 @@ const Home: NextPage = () => {
 
     // do db stuff
     collectionCreate.mutate({ name, id });
-    // TODO: Provide feedback to user
 
     // close drawer
     setBottomDrawerOpen(false);
@@ -337,9 +427,7 @@ const Home: NextPage = () => {
       </Head>
 
       <main>
-        <AppBar
-          saveOrder={() => alert("save changes button is not yet implemented")}
-        />
+        <AppBar loadingState={loadingState} />
         <div className="flex flex-col items-center justify-start">
           {data && data.items && data.units && data.collections ? (
             <>
@@ -347,6 +435,11 @@ const Home: NextPage = () => {
                 data={data}
                 setData={setData}
                 addItemOnClick={() => console.log("add item onclick")}
+                updateUnitsOrder={mutateUnitsOrder}
+                updateCollectionsOrder={mutateCollectionsOrder}
+                updateItemsOrder={mutateItemsOrder}
+                updateUnitCollectionId={mutateUnitCollectionId}
+                updateItemUnitId={mutateItemUnitId}
               />
               <BottomDrawer
                 open={bottomDrawerOpen}
